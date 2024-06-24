@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CSV and Run K-means</title>
+</head>
+<body>
+    <h1>Upload CSV File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="csvfile" accept=".csv">
+        <button type="submit">Upload and Run K-means</button>
+    </form>
+
+    <!-- Script para manejar la carga del archivo y mostrar resultados -->
+    <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('csvfile', document.querySelector('input[type="file"]').files[0]);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const url = window.URL.createObjectURL(await response.blob());
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'resultados.csv';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                console.error('Error:', response.statusText);
+            }
+        });
+    </script>
+</body>
+</html>
